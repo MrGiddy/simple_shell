@@ -1,4 +1,4 @@
-#include "main.h"
+#include "shell.h"
 
 /**
  * _strlen - Computes length of a string
@@ -73,46 +73,64 @@ char *_strdup(char *str)
  */
 char **toknize(char *command, char *delimiter)
 {
-	char *copyOfCommand, *copyOfCommand2, *tok;
+	char *copyOfCommand, *tok;
 	char **argv;
 	int numToks, i, j;
 
 	copyOfCommand = _strdup(command);
 	tok = strtok(copyOfCommand, delimiter);
-	for (numToks = 0; tok != NULL; numToks++)
-		tok = strtok(NULL, delimiter);
 
-	argv = malloc(numToks * sizeof(char *));
-	if (argv == NULL)
+	/* Count non-empty tokens */
+	for (numToks = 0; tok != NULL; numToks++)
 	{
-		perror("Error");
-		exit(EXIT_FAILURE);
+		if (_strlen(tok) > 0)
+		{
+			tok = strtok(NULL, delimiter);
+		}
+		else
+		{
+			/* Move to next tok if tok is empty */
+			tok = strtok(NULL, delimiter);
+			numToks--;
+		}
 	}
 
-	copyOfCommand2 = _strdup(command);
-	tok = strtok(copyOfCommand2, delimiter);
-	i = 0;
-	while (tok != NULL)
+	if (numToks > 0)
 	{
-		argv[i] = malloc((_strlen(tok) + 1) * sizeof(char));
-		if (argv[i] == NULL)
+		argv = malloc((numToks + 1) * sizeof(char *));
+		if (argv == NULL)
 		{
-			for (j = 0; j < i; j++)
-			{
-				free(argv[j]);
-			}
-			free(argv);
-			perror("Error");
+			perror("malloc");
 			exit(EXIT_FAILURE);
 		}
-		_strcpy(argv[i], tok);
-		tok = strtok(NULL, delimiter);
-		i++;
+
+		free(copyOfCommand);
+		copyOfCommand = _strdup(command);
+		tok = strtok(copyOfCommand, delimiter);
+		i = 0;
+		while (tok != NULL)
+		{
+			argv[i] = malloc((_strlen(tok) + 1) * sizeof(char));
+			if (argv[i] == NULL)
+			{
+				for (j = 0; j < i; j++)
+				{
+					free(argv[j]);
+				}
+				free(argv);
+				perror("Error");
+				exit(EXIT_FAILURE);
+			}
+			_strcpy(argv[i], tok);
+			tok = strtok(NULL, delimiter);
+			i++;
+		}
+		argv[i] = NULL;
+		free(copyOfCommand);
+		return (argv);
 	}
-	argv[i] = NULL;
 	free(copyOfCommand);
-	free(copyOfCommand2);
-	return (argv);
+	return (NULL);
 }
 
 /**
@@ -131,5 +149,66 @@ char *_strcpy(char *dest, char *src)
 	}
 	dest[len_src] = '\0';
 
+	return (dest);
+}
+
+/**
+ * lenOfArray - Computes length of NULL-terminated array of strings
+ * @array: An array of strings
+ * Return: Length of array
+ */
+int lenOfArray(char **array)
+{
+	int len;
+
+	for (len = 0; array[len] != NULL; len++)
+		;
+
+	return (len);
+}
+
+/**
+ * _strcmp - checks the equality of two strings
+ * @string: A null-terminated string
+ * @string2: A null-terminated string
+ * Return: 0 if equal, +ve if s1 > s2, -ve if s1 < s2
+ */
+int _strcmp(char *string, char *string2)
+{
+	while (*string && *string2)
+	{
+		if (*string -  *string2 != 0)
+		{
+			return (*string - *string2);
+		}
+		string++;
+		string2++;
+	}
+
+	return (0);
+}
+
+/**
+ * _strcat - joins a string to another
+ * @dest: A pointer to the initial string
+ * @src: A pointer to the string to concatenate
+ * Return: A pointer to the concatenated string
+ */
+char *_strcat(char *dest, char *src)
+{
+	int i, lenDest, lenSrc;
+
+	for (lenDest = 0; dest[lenDest] != '\0'; lenDest++)
+		;
+
+	for (lenSrc = 0; src[lenSrc] != '\0'; lenSrc++)
+		;
+
+	for (i = 0; i < lenSrc; i++)
+	{
+		dest[lenDest] = src[i];
+		lenDest++;
+	}
+	dest[lenDest] = '\0';
 	return (dest);
 }

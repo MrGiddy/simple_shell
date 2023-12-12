@@ -1,4 +1,4 @@
-#include "main.h"
+#include "shell.h"
 
 /**
  * display_prompt - Displays a commandline prompt
@@ -25,46 +25,23 @@ char *read_commandline(void)
 	ret = getline(&lineptr, &n, stdin);
 	if (ret == -1)
 	{
-		perror("getline");
 		free(lineptr);
+		_puts("\n");
 		exit(EXIT_FAILURE);
 	}
 
 	return (lineptr);
 }
 
+
 /**
- * execute_command - executes a command
- * @command: A string from the commandline
- * @delimiter: Token separator(s) for command
+ * printError - prints an error message
  * Return: Nothing
  */
-void execute_command(char *command, char *delimiter)
+void printError(char *str)
 {
-	pid_t pid;
-	int wstatus;
-	char **argv = toknize(command, delimiter);
-	extern char **environ;
-
-	pid = fork();
-	if (pid == -1)
-	{
-		perror("fork");
-		exit(EXIT_FAILURE);
-	}
-
-	if (pid == 0)
-	{
-		if ((execve(argv[0], argv, environ)) == -1)
-		{
-			perror("execve");
-			exit(EXIT_FAILURE);
-		}
-	}
-	else
-	{
-		wait(&wstatus);
-	}
+	_puts("hsh: ");
+	perror(str);
 }
 
 /**
@@ -75,13 +52,30 @@ void execute_command(char *command, char *delimiter)
 int main(void)
 {
 	char *command;
-	char *delimiter = " ,\t\n";
+	char *delimiter = " \t\n";
+	char **argv;
+	int ac, j;
 
 	while (1)
 	{
 		display_prompt();
+
 		command = read_commandline();
-		execute_command(command, delimiter);
+		if (command[0] == '\n')
+			continue;
+
+		argv = toknize(command, delimiter);
+
+		execute_command(argv);
+
+		free(command);
+		ac = lenOfArray(argv);
+		for (j = 0; j < ac; j++)
+                {
+			free(argv[j]);
+		}
+		free(argv);
+		argv = NULL;
 	}
 
 	exit(EXIT_SUCCESS);
