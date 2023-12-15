@@ -18,6 +18,11 @@ char *handle_path(char *pathName, char *prog)
 
 	arrayOfPaths = toknize(pathString, ":");
 	free(pathString); /* is dynam. alloc'd in getEnv() */
+	if (arrayOfPaths == NULL)
+	{
+		perror("Error: arrayOfPathr in handle_path()");
+		return (NULL);
+	}
 
 	for (i = 0; arrayOfPaths[i] != NULL; i++)
 	{
@@ -26,7 +31,6 @@ char *handle_path(char *pathName, char *prog)
 		if (fullPath == NULL)
 		{
 			perror("malloc");
-			exit(EXIT_FAILURE);
 		}
 		/* Build the fullPath */
 		_strcpy(fullPath, arrayOfPaths[i]);
@@ -46,5 +50,10 @@ char *handle_path(char *pathName, char *prog)
 		free(fullPath);
 	}
 
+	for (j = 0; arrayOfPaths[j] != NULL; j++)
+	{
+		free(arrayOfPaths[j]);
+	}
+	free(arrayOfPaths);
 	return (NULL);
 }

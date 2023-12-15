@@ -8,9 +8,8 @@
 char *getEnv(char *name)
 {
 	char **environ2 = environ;
-	int i, j;
-	char *tok, *result;
-	envVarNode env_variable;
+	int i;
+	char *tok, *result = NULL;
 	/* Declare an array of structs */
 	envVarNode *array;
 
@@ -23,25 +22,21 @@ char *getEnv(char *name)
 	{
 		tok = strtok(environ2[i], "=");
 
-		env_variable.key = malloc(_strlen(tok) + 1);
-		if (env_variable.key == NULL)
+		array[i].key = malloc(_strlen(tok) + 1);
+		if (array[i].key == NULL)
 		{
 			_puts("getEnv(): malloc failed.");
-			exit(EXIT_FAILURE);
 		}
-		_strcpy(env_variable.key, tok);
+		_strcpy(array[i].key, tok);
 
 		tok = strtok(NULL,  "=");
 
-		env_variable.value = malloc(_strlen(tok) + 1);
-		if (env_variable.value == NULL)
+		array[i].value = malloc(_strlen(tok) + 1);
+		if (array[i].value == NULL)
 		{
 			_puts("getEnv(): malloc failed.");
-			exit(EXIT_FAILURE);
 		}
-		_strcpy(env_variable.value, tok);
-
-		array[i] = env_variable;
+		_strcpy(array[i].value, tok);
 	}
 
 	for (i = 0; i < lenOfArray(environ2); i++)

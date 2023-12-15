@@ -9,7 +9,6 @@ void execute_command(char **argv)
 {
 	char *fullPath;
 	char **ptr;
-	int i;
 
 	if (access(argv[0], F_OK) == 0 && access(argv[0], X_OK) == 0)
 	{
@@ -21,7 +20,6 @@ void execute_command(char **argv)
 		if (fullPath == NULL)
 		{
 			printError("Failed to get full path");
-			exit(EXIT_FAILURE);
 		}
 		else
 		{
@@ -73,5 +71,4 @@ void fork_and_execute(char **argv)
 	{
 		wait(&wstatus);
 	}
-
 }

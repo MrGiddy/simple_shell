@@ -61,21 +61,38 @@ int main(void)
 		display_prompt();
 
 		command = read_commandline();
-		if (command[0] == '\n')
-			continue;
-
-		argv = toknize(command, delimiter);
-
-		execute_command(argv);
-
-		free(command);
-		ac = lenOfArray(argv);
-		for (j = 0; j < ac; j++)
-                {
-			free(argv[j]);
+		if (_strcmp(command,"exit") == 0)
+		{
+			free(command);
+			exit(EXIT_SUCCESS);
 		}
-		free(argv);
-		argv = NULL;
+		else
+		{
+			if (command[0] == '\n')
+			{
+				free(command);
+				continue;
+			}
+
+			argv = toknize(command, delimiter);
+			if (argv == NULL)
+			{
+				/* Handle toknization failure */
+				free(command);
+				continue;
+			}
+
+			execute_command(argv);
+
+			free(command);
+			ac = lenOfArray(argv);
+			for (j = 0; j < ac; j++)
+                	{
+				free(argv[j]);
+			}
+			free(argv);
+			argv = NULL;
+		}
 	}
 
 	exit(EXIT_SUCCESS);
