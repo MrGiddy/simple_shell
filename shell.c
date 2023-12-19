@@ -7,7 +7,11 @@
  */
 void display_prompt(void)
 {
-	_puts("($) ");
+	if (isatty(STDIN_FILENO))
+	{
+		_puts("($) ");
+		fflush(stdout);
+	}
 }
 
 /**
@@ -26,7 +30,6 @@ char *read_commandline(void)
 	if (ret == -1)
 	{
 		free(lineptr);
-		_puts("\n");
 		exit(EXIT_FAILURE);
 	}
 
