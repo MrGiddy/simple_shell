@@ -22,20 +22,33 @@ void display_prompt(void)
 char *read_commandline(void)
 {
 	char *lineptr = NULL;
-	size_t n;
+	size_t n, len;
 	ssize_t ret;
 
 	n = 0;
 	ret = getline(&lineptr, &n, stdin);
 	if (ret == -1)
 	{
-		free(lineptr);
-		exit(EXIT_FAILURE);
+		if (feof(stdin))
+		{
+			free(lineptr);
+			exit(EXIT_SUCCESS);
+		}
+		else
+		{
+			perror("getline");
+			exit(EXIT_FAILURE);
+		}
+	}
+
+	len = _strlen(lineptr);
+	if (len > 0 && lineptr[len - 1] == '\n')
+	{
+		lineptr[strlen(lineptr) - 1] = '\0';
 	}
 
 	return (lineptr);
 }
-
 
 /**
  * printError - prints an error message
@@ -64,19 +77,13 @@ int main(void)
 		display_prompt();
 
 		command = read_commandline();
-		if (_strcmp(command,"exit") == 0)
+		if (_strcmp(command, "exit") == 0)
 		{
 			free(command);
 			exit(EXIT_SUCCESS);
 		}
 		else
 		{
-			if (command[0] == '\n')
-			{
-				free(command);
-				continue;
-			}
-
 			argv = toknize(command, delimiter);
 			if (argv == NULL)
 			{
@@ -90,7 +97,7 @@ int main(void)
 			free(command);
 			ac = lenOfArray(argv);
 			for (j = 0; j < ac; j++)
-                	{
+			{
 				free(argv[j]);
 			}
 			free(argv);

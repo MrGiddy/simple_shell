@@ -2,7 +2,7 @@
 
 /**
  * execute_command - executes a command
- * @argv - An array of strings (tokenized command line)
+ * @argv: An array of strings (tokenized command line)
  * Return: Nothing
  */
 void execute_command(char **argv)
@@ -47,6 +47,11 @@ void execute_command(char **argv)
 	}
 }
 
+/**
+ * fork_and_execute - executes a command in a child process
+ * @argv: argument vector
+ * Return: Nothing
+ */
 void fork_and_execute(char **argv)
 {
 	pid_t pid;
