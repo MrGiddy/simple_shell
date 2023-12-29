@@ -70,7 +70,6 @@ int main(void)
 	char *command;
 	char *delimiter = " \t\n";
 	char **argv;
-	int ac, j;
 
 	while (1)
 	{
@@ -95,13 +94,7 @@ int main(void)
 			execute_command(argv);
 
 			free(command);
-			ac = lenOfArray(argv);
-			for (j = 0; j < ac; j++)
-			{
-				free(argv[j]);
-			}
-			free(argv);
-			argv = NULL;
+			freeArrayOfStrings(argv);
 		}
 	}
 

@@ -155,7 +155,7 @@ char *_strcpy(char *dest, char *src)
 /**
  * lenOfArray - Computes length of NULL-terminated array of strings
  * @array: An array of strings
- * Return: Length of array
+ * Return: Length of array, NULL not counted
  */
 int lenOfArray(char **array)
 {
@@ -211,4 +211,25 @@ char *_strcat(char *dest, char *src)
 	}
 	dest[lenDest] = '\0';
 	return (dest);
+}
+
+/**
+ * freeArrayOfStrings - frees a dynamically allocaed array of strings
+ * @array: an array of strings
+ * @lenArray: Length of aray
+ * Return: Nothing
+ */
+void freeArrayOfStrings(char **array)
+{
+	int i;
+
+	if (array == NULL)
+		return;
+
+	for (i = 0; array[i] != NULL; i++)
+	{
+		free(array[i]);
+	}
+
+	free(array);
 }

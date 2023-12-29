@@ -8,7 +8,6 @@
 void execute_command(char **argv)
 {
 	char *fullPath;
-	char **ptr;
 
 	if (access(argv[0], F_OK) == 0 && access(argv[0], X_OK) == 0)
 	{
@@ -16,7 +15,7 @@ void execute_command(char **argv)
 	}
 	else
 	{
-		fullPath = _strdup(handle_path("PATH", argv[0]));
+		fullPath = handle_path("PATH", argv[0]);
 		if (fullPath == NULL)
 		{
 			printError("Failed to get full path");
@@ -25,18 +24,9 @@ void execute_command(char **argv)
 		{
 			if (access(fullPath, F_OK) == 0 && access(fullPath, X_OK) == 0)
 			{
-				/* Alloc. mem for ptr, including space for fullPath and NULL */
-				ptr = malloc(sizeof(char *) * 2);
-				if (ptr == NULL)
-				{
-					printError("malloc");
-					exit(EXIT_FAILURE);
-				}
-				ptr[0] = fullPath;
-				ptr[1] = NULL;
-				fork_and_execute(ptr);
-				free(ptr[0]); /* Free fullPath */
-				free(ptr); /* Free ptr */
+				free(argv[0]);
+				argv[0] = fullPath;
+				fork_and_execute(argv);
 			}
 			else
 			{

@@ -7,39 +7,52 @@
  */
 char *getEnv(char *name)
 {
-	char **environ2 = environ;
+	char **environ2 = copyArrayOfStrings(environ);
 	int i;
 	char *tok, *result = NULL;
-	/* Declare an array of structs */
 	envVarNode *array;
+	int numEnvVars = lenOfArray(environ2);
 
 	if (name == NULL)
+	{
+		freeArrayOfStrings(environ2);
 		return (NULL);
+	}
 
-	array = malloc(lenOfArray(environ2) * sizeof(envVarNode));
+	array = malloc(numEnvVars * sizeof(envVarNode));
+	if (array == NULL)
+	{
+		_puts("getEnv(): malloc failed");
+		freeArrayOfStrings(environ2);
+		return (NULL);
+	}
 
-	for (i = 0; i < lenOfArray(environ2); i++)
+	for (i = 0; i < numEnvVars; i++)
 	{
 		tok = strtok(environ2[i], "=");
-
 		array[i].key = malloc(_strlen(tok) + 1);
 		if (array[i].key == NULL)
 		{
 			_puts("getEnv(): malloc failed.");
+			freeArrayOfStrings(environ2);
+			return (NULL);
 		}
 		_strcpy(array[i].key, tok);
 
 		tok = strtok(NULL,  "=");
-
 		array[i].value = malloc(_strlen(tok) + 1);
 		if (array[i].value == NULL)
 		{
 			_puts("getEnv(): malloc failed.");
+			freeArrayOfStrings(environ2);
+			free(array[i].key);
+			free(array);
+			return (NULL);
 		}
 		_strcpy(array[i].value, tok);
 	}
 
-	for (i = 0; i < lenOfArray(environ2); i++)
+	for (i = 0; i < numEnvVars; i++)
 	{
 		if (_strcmp(array[i].key, name) == 0)
 		{
@@ -48,11 +61,13 @@ char *getEnv(char *name)
 		}
 	}
 
-	for (i = 0; i < lenOfArray(environ2); i++)
+	for (i = 0; i < numEnvVars; i++)
 	{
 		free(array[i].key);
 		free(array[i].value);
 	}
 	free(array);
+
+	freeArrayOfStrings(environ2);
 	return (result);
 }

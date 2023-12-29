@@ -29,5 +29,7 @@ void execute_command(char **argv);
 void fork_and_execute(char **argv);
 char *handle_path(char *pathName, char *prog);
 char *_strcat(char *dest, char *src);
+char **copyArrayOfStrings(char **argv);
+void freeArrayOfStrings(char **array);
 
 #endif /* SHELL_H */

@@ -6,13 +6,11 @@ char *handle_path(char *pathName, char *prog)
 	char **arrayOfPaths;
 	struct stat st;
 	char *fullPath = NULL;
-	int i, j;
+	int i;
 
 	if (pathString == NULL)
 	{
-		_puts("Error: Environment variable ");
-		_puts(pathName);
-		_puts(" not set.");
+		_puts("handlePath() - pathString NULL\n");
 		return (NULL);
 	}
 
@@ -20,7 +18,7 @@ char *handle_path(char *pathName, char *prog)
 	free(pathString); /* is dynam. alloc'd in getEnv() */
 	if (arrayOfPaths == NULL)
 	{
-		perror("Error: arrayOfPathr in handle_path()");
+		perror("Error: arrayOfPaths in handle_path()");
 		return (NULL);
 	}
 
@@ -39,21 +37,13 @@ char *handle_path(char *pathName, char *prog)
 
 		if (stat(fullPath, &st) == 0)
 		{
-			for (j = 0; j <= i; j++)
-			{
-				free(arrayOfPaths[j]);
-			}
-			free(arrayOfPaths);
+			freeArrayOfStrings(arrayOfPaths);
 			return (fullPath);
 		}
 		/* Free mem. if path not found */
 		free(fullPath);
 	}
 
-	for (j = 0; arrayOfPaths[j] != NULL; j++)
-	{
-		free(arrayOfPaths[j]);
-	}
-	free(arrayOfPaths);
+	freeArrayOfStrings(arrayOfPaths);
 	return (NULL);
 }
